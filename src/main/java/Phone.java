@@ -6,7 +6,7 @@ import java.io.Serializable;
 
 @Entity
 @Table(name = "phones")
-public class Phone  implements Serializable {
+public class Phone implements Serializable {
 
     @Id
     @Column(name = "idphones")
@@ -53,11 +53,12 @@ public class Phone  implements Serializable {
 
     @Override
     public String toString() {
-        return "Phone{" +
-                "id=" + id +
-                ", brand='" + brand + '\'' +
-                ", model='" + model + '\'' +
-                ", phoneNumber='" + phoneNumber + '\'' +
-                '}';
+//        return "Phone{" +
+//                "id=" + id +
+//                ", brand='" + brand + '\'' +
+//                ", model='" + model + '\'' +
+//                ", phoneNumber='" + phoneNumber + '\'' +
+//                '}';
+        return "id: " + id + " | " + brand + " " + model + " , " + phoneNumber;
     }
 }

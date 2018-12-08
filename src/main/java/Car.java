@@ -1,8 +1,7 @@
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "cars")
@@ -17,6 +16,9 @@ public class Car implements Serializable {
     private String brand;
     @Column(name = "model")
     private String model;
+
+    @ManyToMany(mappedBy = "cars")
+    private List<Employee> employees = new ArrayList<>();
 
     public int getId() {
         return id;
@@ -46,17 +48,26 @@ public class Car implements Serializable {
         return model;
     }
 
+    public List<Employee> getEmployees() {
+        return employees;
+    }
+
+    public void setEmployees(List<Employee> employee) {
+        this.employees = employee;
+    }
+
     public void setModel(String model) {
         this.model = model;
     }
 
     @Override
     public String toString() {
-        return "Car{" +
-                "id=" + id +
-                ", licensePlate='" + licensePlate + '\'' +
-                ", brand='" + brand + '\'' +
-                ", model='" + model + '\'' +
-                '}';
+//        return "Car{" +
+//                "id=" + id +
+//                ", licensePlate='" + licensePlate + '\'' +
+//                ", brand='" + brand + '\'' +
+//                ", model='" + model + '\'' +
+//                '}';
+        return "id: " + id + " | " + brand + " " + model + " , " + licensePlate;
     }
 }

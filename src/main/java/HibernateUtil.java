@@ -1,11 +1,7 @@
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.EntityTransaction;
-import javax.persistence.Persistence;
+import javax.persistence.*;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
-import javax.swing.text.html.parser.Entity;
 import java.io.Serializable;
 import java.util.List;
 
@@ -13,6 +9,16 @@ public class HibernateUtil {
 
     private static final EntityManagerFactory emf = Persistence
             .createEntityManagerFactory("SDAORM");
+
+    private EntityManager em = emf.createEntityManager();
+
+    public EntityManager getEm() {
+        if (this.em == null || (this.em != null && !this.em.isOpen())){
+            this.em = emf.createEntityManager();
+        }
+
+        return this.em;
+    }
 
 
     public void save(Object e) {
@@ -22,17 +28,16 @@ public class HibernateUtil {
         et.begin();
         em.persist(e);
         et.commit();
-
         em.close();
     }
 
 
-    public <Entity extends Serializable> List<Entity> readAll(Class<Entity> entityClass) {
+    public <Entity extends Serializable> List<Entity> readAll(EntityManager manager, Class<Entity> entityClass) {
 
         List<Entity> entities = null;
 
         // Create an EntityManager
-        EntityManager manager = emf.createEntityManager();
+       // EntityManager manager = emf.createEntityManager();
 
         CriteriaBuilder builder = manager.getCriteriaBuilder();
         CriteriaQuery query = builder.createQuery(); //=>"SELECT "
@@ -40,19 +45,19 @@ public class HibernateUtil {
         query.select(root); // "SELECT * from E e"
 
         entities = manager.createQuery(query).getResultList();
-        manager.close();
+      //  manager.close();
 
         return entities;
     }
 
 
 
-    public <Entity extends Serializable> List<Entity> findByName(Class<Entity> entityClass, String s) {
+    public <Entity extends Serializable> List<Entity> findByName(EntityManager manager, Class<Entity> entityClass, String s) {
 
         List<Entity> entities = null;
 
         // Create an EntityManager
-        EntityManager manager = emf.createEntityManager();
+ //       EntityManager manager = emf.createEntityManager();
 
         CriteriaBuilder builder = manager.getCriteriaBuilder();
         CriteriaQuery query = builder.createQuery(); //=>"SELECT "
@@ -62,20 +67,25 @@ public class HibernateUtil {
         query.where(builder.equal(root.get("lastName"), s));
 
         entities = manager.createQuery(query).getResultList();
-        manager.close();
+//        manager.close();
 
         return entities;
     }
 
-    public Entity findByKey(Class<Entity> entityClass, int n) {
+    public <Entity extends Serializable> Entity findByKey(Class<Entity> entityClass, int n) {
         EntityManager em = emf.createEntityManager();
         Entity entity = em.find(entityClass, n);
 
         return entity;
     }
 
+
     public void closeEMF() {
         emf.close();
     }
 
+
+    public void closeEM() {
+        this.em.close();
+    }
 }

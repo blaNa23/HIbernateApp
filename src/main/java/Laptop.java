@@ -1,8 +1,6 @@
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.io.Serializable;
+import java.util.Objects;
 
 @Entity
 @Table(name = "laptops")
@@ -15,6 +13,7 @@ public class Laptop implements Serializable {
     private String brand;
     @Column(name = "model")
     private String model;
+
 
     public int getId() {
         return id;
@@ -42,10 +41,24 @@ public class Laptop implements Serializable {
 
     @Override
     public String toString() {
-        return "Laptop{" +
-                "id=" + id +
-                ", brand='" + brand + '\'' +
-                ", model='" + model + '\'' +
-                '}';
+//        return "Laptop{" +
+//                "id=" + id +
+//                ", brand='" + brand + '\'' +
+//                ", model='" + model + '\'' +
+//                '}';
+        return "id: " + id + " | " + brand + " " + model;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Laptop laptop = (Laptop) o;
+        return id == laptop.id;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
     }
 }

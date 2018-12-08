@@ -1,4 +1,4 @@
-import javax.swing.text.html.parser.Entity;
+import javax.persistence.EntityManager;
 import javax.transaction.HeuristicMixedException;
 import javax.transaction.HeuristicRollbackException;
 import javax.transaction.RollbackException;
@@ -13,6 +13,9 @@ public class Main {
     public static HibernateUtil h = new HibernateUtil();
 
     public static void main(String[] args) throws HeuristicRollbackException, RollbackException, HeuristicMixedException, SystemException {
+
+
+
 
         play();
         h.closeEMF();
@@ -32,7 +35,8 @@ public class Main {
                         int option1 = scanner.nextInt();
                         switch (option1) {
                             case 1:
-                                System.out.println("apasasi: add1");
+                                System.out.println("Please enter user's details");
+                                createEmployee();
                                 break;
                             case 2:
                                 System.out.println("Please enter phone details");
@@ -122,6 +126,7 @@ public class Main {
                 "  4 -> show all cars\n" +
                 "  0 -> back to Menu");
     }
+
     public static void createEmployee() {
         Employee employee = new Employee();
         System.out.println("id:");
@@ -130,16 +135,62 @@ public class Main {
         employee.setFirstName(scanner.next());
         System.out.println("last name: ");
         employee.setLastName(scanner.next());
-
+        System.out.println("assign object to user ?\n" +
+                "  press y or n ");
         char choice = scanner.next().charAt(0);
 
-        if(choice == 'y') {
-            showPhones();
-            System.out.println("assign phone by typing the primary key");
-            int n = scanner.nextInt();
-            //Phone phone = h.findByKey(Phone.class,n);
+        if (choice == 'y') {
+            assignObjects(employee);
         }
+        System.out.println("ai ajuns aici");
 
+        HibernateUtil h = new HibernateUtil();
+        h.save(employee);
+    }
+
+    public static void assignmentMenu() {
+        System.out.println("  1 -> phone assignment\n" +
+                "  2 -> laptop assignment\n" +
+                "  3 -> car assignment\n" +
+                "  0 -> done assignment & save object ");
+    }
+
+    public static void assignObjects(Employee e) {
+        boolean quit = false;
+        while (!quit) {
+            assignmentMenu();
+            int option = scanner.nextInt();
+            switch (option) {
+                case 1:
+                    showPhones();
+                    System.out.println("assign phone by typing the primary key");
+                    int p = scanner.nextInt();
+                    Phone phone = h.findByKey(Phone.class, p);
+                    e.setPhone(phone);
+                    break;
+                case 2:
+                    showLaptops();
+                    System.out.println("assign laptop by typing the primary key");
+                    int l = scanner.nextInt();
+                    Laptop laptop = h.findByKey(Laptop.class, l);
+                    e.getLaptops().add(laptop);
+                    break;
+                case 3:
+                    showCars();
+                    System.out.println("assign car by typing the primary key");
+                    int c = scanner.nextInt();
+                    Car car = h.findByKey(Car.class,c);
+                    e.getCars().add(car);
+                    car.getEmployees().add(e);
+                    break;
+                case 0:
+                    quit = true;
+                    break;
+                default:
+                    System.out.println("Wrong key !");
+                    break;
+            }
+        }
     }
 
     public static void createPhone() {
@@ -190,38 +241,55 @@ public class Main {
 
     public static void showEmployee() {
 
-        List<Employee> list = h.readAll(Employee.class);
+        EntityManager em = h.getEm();
+
+        List<Employee> list = h.readAll(em, Employee.class);
 
         for (Employee e : list) {
             System.out.println(e);
         }
+
+        em.close();
     }
 
     public static void showPhones() {
 
-        List<Phone> list = h.readAll(Phone.class);
+        EntityManager em = h.getEm();
+
+        List<Phone> list = h.readAll(em, Phone.class);
 
         for (Phone p : list) {
             System.out.println(p);
         }
+
+        h.closeEM();
     }
 
     public static void showLaptops() {
 
-        List<Laptop> list = h.readAll(Laptop.class);
+        EntityManager em = h.getEm();
+
+
+        List<Laptop> list = h.readAll(em, Laptop.class);
 
         for (Laptop l : list) {
             System.out.println(l);
         }
+
+        h.closeEM();
     }
 
     public static void showCars() {
 
-        List<Car> list = h.readAll(Car.class);
+        EntityManager em = h.getEm();
+
+        List<Car> list = h.readAll(em, Car.class);
 
         for (Car c : list) {
             System.out.println(c);
         }
+
+        h.closeEM();
     }
 
 }
